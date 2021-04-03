@@ -1,0 +1,44 @@
+1) Pegar a/o coleção/grupo de dias do mês atual;
+    document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2)')
+    //script fixo
+
+2) Pegar a quantidade de dias trabalhados até então no mês atual;
+OBS: Considerar apenas até o DIA ATUAL.
+    document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2)').rows.length
+    //script fixo
+
+3) Pegar O CONJUNTO de informações de um determinado dia;
+    document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2) > tr:nth-child(${INPUT_DIA_DESEJADO})')
+    //script fixo
+    //ou
+    document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2)')
+        .querySelector('tr:nth-child(${INPUT_DIA_DESEJADO})')
+
+4) Pegar CADA UMA das informações de um determinado dia:
+    4.1)Data da Marcação
+        document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2) > tr:nth-child(1) > td:nth-child(${NUMERO_UM})')
+        //script variavel. inserir número do campo NUMERO_UM=1
+        //ou
+        document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2) > tr:nth-child(1)')
+            .querySelector('td:nth-child(${NUMERO_UM})')
+
+    4.2)Horário Normal
+        document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2) > tr:nth-child(1) > td:nth-child(${NUMERO_DOIS})')
+        //script variavel. inserir número do campo NUMERO_DOIS=2
+        //ou
+        document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2) > tr:nth-child(1)')
+            .querySelector('td:nth-child(${NUMERO_DOIS})')
+
+    4.3)Horário das Marcacoes
+        document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2) > tr:nth-child(1) > td:nth-child(${NUMERO_TRES})')
+        //script variavel. inserir número do campo NUMERO_TRES=3
+        //ou
+        document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2) > tr:nth-child(1)')
+            .querySelector('td:nth-child(${NUMERO_TRES})')
+
+    4.4)Total de Horas Trabalhadas
+        document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2) > tr:nth-child(1) > td:nth-child(${NUMERO_QUARTO})')
+        //script variavel. inserir número do campo NUMERO_QUARTO=4
+        //ou
+        document.querySelector('#template > table:nth-child(2) > tbody:nth-child(2) > tr:nth-child(1)')
+            .querySelector('td:nth-child(${NUMERO_QUARTO})')

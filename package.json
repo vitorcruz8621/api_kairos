@@ -1,0 +1,14 @@
+{
+  "name": "js",
+  "version": "1.0.0",
+  "description": "Área de testes para tecnologias JS",
+  "main": "index.js",
+  "scripts": {
+    "test": "test app"
+  },
+  "author": "Vitor Cruz",
+  "license": "ISC",
+  "dependencies": {
+    "tsc": "^1.20150623.0"
+  }
+}
