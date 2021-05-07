@@ -1,75 +1,66 @@
-var arrTbody = [...document.querySelector("#chamadoIt > tbody").rows]
-var keyData = "01/04/2021"
+class horariosSGC {
+    marcacoes
 
-function retornarMinutosTotais (tdElemt) {
-	return (
-		( ((60 * parseInt(tdElemt[3].querySelector("td:nth-child(2)").innerText.substr(0,2)) ) + parseInt(tdElemt[3].querySelector("td:nth-child(2)").innerText.substr(3,5)) ) -
-		  ((60 * parseInt(tdElemt[2].querySelector("td:nth-child(2)").innerText.substr(0,2))) + parseInt(tdElemt[2].querySelector("td:nth-child(2)").innerText.substr(3,5))) ) + 
-		( ((60 * parseInt(tdElemt[1].querySelector("td:nth-child(2)").innerText.substr(0,2))) + parseInt(tdElemt[1].querySelector("td:nth-child(2)").innerText.substr(3,5)) ) -
-		  ((60 * parseInt(tdElemt[0].querySelector("td:nth-child(2)").innerText.substr(0,2))) + parseInt(tdElemt[0].querySelector("td:nth-child(2)").innerText.substr(3,5))) )
-	)
-}
-
-function retornarJsonDatas (arrTbody, keyData) {
-	var arrayJson = [];
-	while ( keyData !== "31/04/2021") {
-		var tdElemt = arrTbody.filter(element => (element.querySelector("td:nth-child(1)").innerText).match(new RegExp(keyData)) );
-		
-		if (tdElemt != null && tdElemt !== "" && tdElemt != []) {
-			var minutosTotais = (
-				( ((60 * parseInt(tdElemt[3].querySelector("td:nth-child(2)").innerText.substr(0,2)) ) + parseInt(tdElemt[3].querySelector("td:nth-child(2)").innerText.substr(3,5)) ) -
-				  ((60 * parseInt(tdElemt[2].querySelector("td:nth-child(2)").innerText.substr(0,2))) + parseInt(tdElemt[2].querySelector("td:nth-child(2)").innerText.substr(3,5))) ) + 
-				( ((60 * parseInt(tdElemt[1].querySelector("td:nth-child(2)").innerText.substr(0,2))) + parseInt(tdElemt[1].querySelector("td:nth-child(2)").innerText.substr(3,5)) ) -
-				  ((60 * parseInt(tdElemt[0].querySelector("td:nth-child(2)").innerText.substr(0,2))) + parseInt(tdElemt[0].querySelector("td:nth-child(2)").innerText.substr(3,5))) )
-			)
-			var horasTrabalhadas = ((minutosTotais=this.minutosTotais) => {
-				for (var horas=0; minutosTotais >= 60; minutosTotais=minutosTotais-60, horas++);
-				return ( (horas).toString().padStart(2, "0") ).concat(":").concat( (minutosTotais).toString().padStart(2, "0") );
-			})
-			
-			var jsonObjeto = {
-				'data' : keyData,
-				'horasTrabalhadas' : horasTrabalhadas
-			}
-			
-			arrayJson.push(jsonObjeto)
-		
-		}
-		
-		keyData = ((parseInt(keyData.substr(0,2)) + 1).toString()).padStart(2, "0");
-	}
-	
-	return arrayJson;	
-}
-
-function converterEmMinutosTrabalhados(arrHorasSgcMisturadas ) {
-	var arrMinutosTotais = [];
-    for (var cont=0; cont < arrHorasSgcMisturadas.length; cont=cont+4) {
-		var minutos = (
-			( ((60 * parseInt(arrHorasSgcMisturadas[cont+3].substr(0,2))) + parseInt(arrHorasSgcMisturadas[cont+3].substr(3,5)) ) -
-			  ((60 * parseInt(arrHorasSgcMisturadas[cont+2].substr(0,2))) + parseInt(arrHorasSgcMisturadas[cont+2].substr(3,5))) ) + 
-			( ((60 * parseInt(arrHorasSgcMisturadas[cont+1].substr(0,2))) + parseInt(arrHorasSgcMisturadas[cont+1].substr(3,5)) ) -
-			  ((60 * parseInt(arrHorasSgcMisturadas[cont].substr(0,2))) + parseInt(arrHorasSgcMisturadas[cont].substr(3,5))) )
-		)
-		arrMinutosTotais.push(minutos)
+    constructor(){
+        this.marcacoes = this.retornarMarcacoes()
     }
-	
-	return arrMinutosTotais
+    
+    retornarMarcacoes() {
+        var arrHoras = []
+        const arrHorasMisturadas = [...document.querySelector("#chamadoIt > tbody").rows].map(element => {
+            return {
+                'data' : element.querySelector("td:nth-child(1)").innerText,
+                'horas' : element.querySelector("td:nth-child(2)").innerText
+            }
+        });
+
+        function horarioString(tempo,habilitarSinalPositivo){
+            var horas = Math.floor(Math.abs(tempo)/60 )
+            var minutos = Math.abs(Math.abs(tempo) - (horas * 60) )
+            var sinal = "";
+            
+            if (tempo > 0 && habilitarSinalPositivo) sinal = "+";
+            else if ( tempo < 0) sinal = "-";
+            return ( sinal + ( (horas.toString()).padStart(2, "0") ).concat(":").concat( (minutos.toString()).padStart(2, "0")) );
+        }
+    
+        for (var cont = 0; cont < ((arrHorasMisturadas.length)); cont=cont+4) {
+            var horas = 0;
+            var minutos = (
+                (
+                    (
+                        (parseInt(arrHorasMisturadas[cont+3].horas.substring(0,2)) * 60) 
+                        + (parseInt(arrHorasMisturadas[cont+3].horas.substring(3,5)))
+                    ) 
+                    - 
+                    (
+                        (parseInt(arrHorasMisturadas[cont+2].horas.substring(0,2)) * 60) 
+                        + (parseInt(arrHorasMisturadas[cont+2].horas.substring(3,5)))
+                    )
+                )
+                + 
+                (
+                    (
+                        (parseInt(arrHorasMisturadas[cont+1].horas.substring(0,2)) * 60) 
+                        + (parseInt(arrHorasMisturadas[cont+1].horas.substring(3,5))) ) 
+                    - 
+                    ( 
+                        (parseInt(arrHorasMisturadas[cont+0].horas.substring(0,2)) * 60) 
+                        + (parseInt(arrHorasMisturadas[cont+0].horas.substring(3,5)))
+                    )
+                )
+            )
+    
+            arrHoras.push({
+                'data' : arrHorasMisturadas[cont].data,
+                'horario' : horarioString(minutos, false),
+                'diferencaSaldoDia' : horarioString(minutos - 480, true)
+                //'horario' : ( (horas.toString()).padStart(2, "0") ).concat(":").concat( (minutos.toString()).padStart(2, "0") )
+            })
+        }
+    
+        return arrHoras
+    }
 }
 
-
-
-var arrHorasMisturadas = arrTbody.map(elem => {
-	elem.querySelector("td:nth-child(2)").innerText
-})
-
-var arrMinutosTotaisTrabalhadosPorDia = converterEmMinutosTrabalhados(arrHorasMisturadas)
-
-function converterEmHorasTrabalhadas (arrMinutosTotaisTrabalhadosPorDia) {
-	return arrMinutosTotaisTrabalhadosPorDia.map(minutos => {
-		for (var horas=0; minutos >= 60; horas++, minutos=minutos-60);
-		return ((horas).toString().padStart(2, "0")).concat(":").concat((minutos).toString().padStart(2, "0"));
-	})
-}
-
-var arrHorasTrabalhadas = converterEmHorasTrabalhadas (arrMinutosTotaisTrabalhadosPorDia)
+var main = new horariosSGC()
