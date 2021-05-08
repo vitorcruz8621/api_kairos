@@ -4,6 +4,51 @@ class horariosSGC {
     constructor(){
         this.marcacoes = this.retornarMarcacoes()
     }
+
+    adicionarUmDia(keyData) {
+        return new((parseInt(keyData.substring(0,2)))+1).toString().padStart(2,"0").concat(keyData.substring(2,10))
+    }
+
+    newRegExp (keyData) {
+        return match(keyData.substring(0,2)+"/"+keyData.substring(3,10))
+    }
+
+    checarPorData (arrHorasMisturadas, keyData) {
+        var objAtual = arrHorasMisturadas.filter( (element, index) => {
+            if (element.data === keyData) {
+                if (index % 2 === 0 && element.movimento !== "ENTRADA")
+                    throw new Error("A marcação '"+element.data+" "+element.marcacao+" "+element.movimento+"' deveria ter o movimento 'SAÍDA'");
+                else if (index % 2 === 1 && element.movimento !== "SAÍDA")
+                    throw new Error("A marcação '"+element.data+" "+element.marcacao+" "+element.movimento+"' deveria ter o movimento 'ENTRADA'");
+                else 
+                    return element
+            } else console.log(index)
+        })
+
+        if (objAtual.length % 2 !== 0 ) {
+            throw new Error("A data "+ keyData +"possue uma quantidade ímpar de marcações.")
+        }
+
+        return objAtual;
+    }
+
+    validarMarcacoes() {
+        var arrHorasMisturadas = [...document.querySelector("#chamadoIt > tbody").rows].map(element => {
+            return {
+                'data' : element.querySelector("td:nth-child(1)").innerText,
+                'horas' : element.querySelector("td:nth-child(2)").innerText
+            }
+        });
+
+        var keyData = "01/04/2021"
+
+        while (keyData !== "31/04/2021") {
+            var objAtual = this.checarPorData(arrHorasMisturadas, keyData)
+            keyData = adicionarUmDia(keyData);
+        }     
+
+        
+    }
     
     retornarMarcacoes() {
         var arrHoras = []
