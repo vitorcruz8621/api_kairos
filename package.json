@@ -1,5 +1,5 @@
 {
-  "name": "js",
+  "name": "api_horarios_sefaz",
   "version": "1.0.0",
   "description": "Área de testes para tecnologias JS",
   "main": "index.js",
@@ -9,6 +9,22 @@
   "author": "Vitor Cruz",
   "license": "ISC",
   "dependencies": {
+    "jasmine": "^3.7.0",
     "tsc": "^1.20150623.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitorcruz8621/api_kairos.git"
+  },
+  "keywords": [
+    "api",
+    "kairos",
+    "sgc",
+    "sefaz",
+    "horarios"
+  ],
+  "bugs": {
+    "url": "https://github.com/vitorcruz8621/api_kairos/issues"
+  },
+  "homepage": "https://github.com/vitorcruz8621/api_kairos#readme"
 }

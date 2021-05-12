@@ -1,0 +1,27 @@
+[
+    {
+        "data" : "01/04/2021",
+        "marcacaoHorario" : "08:10",
+        "movimento" : "ENTRADA"
+    },
+    {
+        "data" : "01/04/2021",
+        "marcacaoHorario" : "12:15",
+        "movimento" : "SAÍDA"
+    },
+    {
+        "data" : "01/04/2021",
+        "marcacaoHorario" : "13:15",
+        "movimento" : "ENTRADA"
+    },
+    {
+        "data" : "01/04/2021",
+        "marcacaoHorario" : "16:50",
+        "movimento" : "SAÍDA"
+    },
+    {
+        "data" : "01/04/2021",
+        "marcacaoHorario" : "17:50",
+        "movimento" : "SAÍDA"
+    }
+]

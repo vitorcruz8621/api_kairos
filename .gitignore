@@ -105,3 +105,10 @@ dist
 
 # JS Files from App folder
 App/*.js
+
+# Dados MOCK
+./dados_mock_json/*
+
+./tabela.html
+./teste_jasmine.js
+./testes.js
