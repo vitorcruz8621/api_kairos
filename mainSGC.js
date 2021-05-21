@@ -1,137 +1,137 @@
-class horariosSGC {
+class HorariosSGC {
     marcacoes
 
     constructor(){
         this.marcacoes = this.retornarMarcacoes()
     }
     
-    //MÉTODOS À TESTAR
-    adicionarUmDia(keyData) {
-        return new((parseInt(keyData.substring(0,2)))+1).toString().padStart(2,"0").concat(keyData.substring(2,10))
-    }
+    retornarMarcacoes() {
+        function adicionarUmDia(keyData) {
+            console.log("Executando: adicionarUmDia");
+            console.log("Finalizando: adicionarUmDia");
+            return ((parseInt(keyData.substring(0,2)))+1).toString().padStart(2,"0").concat(keyData.substring(2,10))
+        }
+        
+        function validarBatidasERetoranrDiaFiltradoDiaFiltrado (arrHorasMisturadas, keyData) {
+            console.log("Executando: validarBatidasERetoranrDiaFiltradoDiaFiltrado");
+            const MOVIMENTO_ENTRADA = "ENTRADA", MOVIMENTO_SAIDA = "SAIDA";
 
-    newRegExp (keyData) {
-        return match(keyData.substring(0,2)+"/"+keyData.substring(3,10))
-    }
+            var objAtual = arrHorasMisturadas.filter( (element, index) => {
+                if (element.data === keyData) {
+                    if (index % 2 === 0 && element.movimento === MOVIMENTO_SAIDA)
+                        throw new Error("A marcação '"+element.data+" "+element.marcacaoHorario+" "+element.movimento+"' deveria ter o movimento '"+MOVIMENTO_ENTRADA+"'.");
+                    else if (index % 2 === 1 && element.movimento !== "SAIDA")
+                        throw new Error("A marcação '"+element.data+" "+element.marcacaoHorario+" "+element.movimento+"' deveria ter o movimento '"+MOVIMENTO_SAIDA+"'.");
+                    else 
+                        return element
+                }
+            })
 
-    retornarObjMarcacaoValido (arrHorasMisturadas, keyData) {
-        var objAtual = arrHorasMisturadas.filter( (element, index) => {
-            if (element.data === keyData) {
-                if (index % 2 === 0 && element.movimento !== "ENTRADA")
-                    throw new Error("A marcação '"+element.data+" "+element.marcacaoHorario+" "+element.movimento+"' deveria ter o movimento 'ENTRADA'");
-                else if (index % 2 === 1 && element.movimento !== "SAÍDA")
-                    throw new Error("A marcação '"+element.data+" "+element.marcacaoHorario+" "+element.movimento+"' deveria ter o movimento 'SAÍDA'");
-                else 
-                    return element
-            } else console.log(index)
-        })
+            if (objAtual.length % 2 !== 0 ) {
+                throw new Error("A data "+ keyData +" possue uma quantidade ímpar de marcações.")
+            }
 
-        if (objAtual.length % 2 !== 0 ) {
-            throw new Error("A data "+ keyData +" possue uma quantidade ímpar de marcações.")
+            console.log("Finalizando: validarBatidasERetoranrDiaFiltradoDiaFiltrado");
+            return objAtual;
+        }
+        
+        //VALIDAÇÃO
+        function retornarArrDiasTrabalhadosValido(pKeyDataMin, pKeyDataMax, pArrHorasMisturadas) {
+            console.log("Executando: retornarArrDiasTrabalhadosValido");
+            var arrJsonMarcacoes = [];
+
+            for (var dataAtual = pKeyDataMin; dataAtual <= pKeyDataMax; dataAtual = adicionarUmDia(dataAtual) ) {
+                var diaAtual = (new Date(dataAtual.substring(6,10), (parseInt(dataAtual.substring(3,5)) - 1), dataAtual.substring(0,2) )).getDay()
+                if ( !( /0|6/.test(diaAtual) )) {//
+                    var objAtual = validarBatidasERetoranrDiaFiltradoDiaFiltrado(pArrHorasMisturadas, dataAtual)
+                    objAtual = retornarBatidasComoDiaTrabalhadoJson(objAtual);
+                    arrJsonMarcacoes.push(objAtual);
+                }
+            }
+
+            console.log("Finalizando: retornarArrDiasTrabalhadosValido");
+
+            return arrJsonMarcacoes;
         }
 
-        console.log("Ocorreu tudo bem!")
-        return objAtual;
-    }
+        function montarMarcacaoeSaldoDoDia(pDataAtualMarcacoes) {
+            var saldoDoDia = 0;
+            var arrayMarcacoes = [];
+            console.log("Executando: montarMarcacaoeSaldoDoDia");
 
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    //-----------------------------------------------------------------------------------
-    
-    //VALIDAÇÃO
-    retornarArrMarcacaoValido() {
-        // TODO: 1) pegar a informação da intranet referente ao mês específico das mascações
-        // TODO: 2) Com a informação de "1)", definir o startPoint(01/mm/aaaa) e o endPont([28||30||31]/mm/aaaa)
-        var keyData = "01/04/2021"
-        var arrJsonMarcacoes = []
-        var arrHorasMisturadas = [...document.querySelector("#chamadoIt > tbody").rows].map(element => {
-            return {
-                'data' : element.querySelector("td:nth-child(1)").innerText,
-                'marcacaoHorario' : element.querySelector("td:nth-child(2)").innerText,
-                'movimento' : element.querySelector("td:nth-child(3)").innerText
+            for (var cont =0; cont < pDataAtualMarcacoes.length; cont = cont + 2) {
+                var horaEntrada = pDataAtualMarcacoes[cont]
+                var horaSaida = pDataAtualMarcacoes[cont+1]
+
+                saldoDoDia += (
+                    ((parseInt(horaSaida.marcacaoHorario.substring(0,2)) * 60) + 
+                    (parseInt(horaSaida.marcacaoHorario.substring(3,5)))) - 
+                    ((parseInt(horaEntrada.marcacaoHorario.substring(0,2)) * 60) + 
+                    (parseInt(horaEntrada.marcacaoHorario.substring(3,5))))
+                )
+
+                //arrayMarcacoes.concat(horaEntrada, horaSaida)
+                arrayMarcacoes.push(horaEntrada);
+                arrayMarcacoes.push(horaSaida);
             }
-        });
 
-        while (keyData !== "31/04/2021") {
-            var objAtual = this.retornarObjMarcacaoValido(arrHorasMisturadas, keyData)
-            keyData = adicionarUmDia(keyData);
-            arrJsonMarcacoes.push(objAtual);
-        }     
+            console.log("Finalizando: montarMarcacaoeSaldoDoDia");
 
-        return arrJsonMarcacoes;
-    }
-    
-    retornarMarcacoes() {
-        var arrHoras = []
-        const arrHorasMisturadas = [...document.querySelector("#chamadoIt > tbody").rows].map(element => {
             return {
-                'data' : element.querySelector("td:nth-child(1)").innerText,
-                'marcacaoHorario' : element.querySelector("td:nth-child(2)").innerText
+                'listaMarcacoes' : arrayMarcacoes,
+                'saldoDoDia' : retornarCalculoHorarioComoString(saldoDoDia, false),
+                'saldoDoDiaDiferenca' : retornarCalculoHorarioComoString(saldoDoDia - 480, true)
             }
-        });
+        }
 
-        function horarioString(tempo,habilitarSinalPositivo){
+        //Retornar marcações filtradas do dia específico para formato JSON
+        function retornarBatidasComoDiaTrabalhadoJson(pDataAtualMarcacoes) {
+            console.log("Executando: retornarBatidasComoDiaTrabalhadoJson");
+
+            var batidas = {
+                'data' : pDataAtualMarcacoes[0].data,
+                'marcacaoHorario' : montarMarcacaoeSaldoDoDia(pDataAtualMarcacoes)
+            }
+
+            console.log("Finalizando: retornarBatidasComoDiaTrabalhadoJson");
+
+            return batidas
+        }
+
+        function retornarCalculoHorarioComoString(tempo,habilitarSinalPositivo){
+            console.log("Executando: retornarCalculoHorarioComoString");
             var horas = Math.floor(Math.abs(tempo)/60 )
             var minutos = Math.abs(Math.abs(tempo) - (horas * 60) )
             var sinal = "";
             
             if (tempo >= 0 && habilitarSinalPositivo) sinal = "+";
             else if ( tempo < 0) sinal = "-";
+
+            console.log("Finalizando: retornarCalculoHorarioComoString");
+
             return ( sinal + ( (horas.toString()).padStart(2, "0") ).concat(":").concat( (minutos.toString()).padStart(2, "0")) );
         }
-        
 
-        //TODO 3) Invorcar o método "retornarArrMarcacaoValido()" para formatar e validar 
-        //  os dados brutos das marcações individuáis da Intranet.
-        //TODO 4) Remover/Adaptar o bloco FOR_LOOP abaixo para casos onde marcações!=4
-        for (var cont = 0; cont < ((arrHorasMisturadas.length)); cont=cont+4) {
-            var horas = 0;
-            var minutos = (
-                (
-                    (
-                        (parseInt(arrHorasMisturadas[cont+3].horas.substring(0,2)) * 60) 
-                        + (parseInt(arrHorasMisturadas[cont+3].horas.substring(3,5)))
-                    ) 
-                    - 
-                    (
-                        (parseInt(arrHorasMisturadas[cont+2].horas.substring(0,2)) * 60) 
-                        + (parseInt(arrHorasMisturadas[cont+2].horas.substring(3,5)))
-                    )
-                )
-                + 
-                (
-                    (
-                        (parseInt(arrHorasMisturadas[cont+1].horas.substring(0,2)) * 60) 
-                        + (parseInt(arrHorasMisturadas[cont+1].horas.substring(3,5))) ) 
-                    - 
-                    ( 
-                        (parseInt(arrHorasMisturadas[cont+0].horas.substring(0,2)) * 60) 
-                        + (parseInt(arrHorasMisturadas[cont+0].horas.substring(3,5)))
-                    )
-                )
-            )
-    
-            arrHoras.push({
-                'data' : arrHorasMisturadas[cont].data,
-                'saldoDoDia' : horarioString(minutos, false),
-                'diferencaSaldoDia' : horarioString(minutos - 480, true)
-                //'horario' : ( (horas.toString()).padStart(2, "0") ).concat(":").concat( (minutos.toString()).padStart(2, "0") )
-            })
-        }
+        var arrHoras = []
+        const arrHorasMisturadas = [...document.getElementById("chamadoIt").tBodies.item(0).rows].map(element => {
+            
+            return {
+                'data' : element.querySelector("td:nth-child(1)").innerText,
+                'marcacaoHorario' : element.querySelector("td:nth-child(2)").innerText,
+                'movimento' : element.querySelector("td:nth-child(3)").innerText,
+                'statusAutorizacao' : element.querySelector("td:nth-child(4)").innerText,
+                'localidade' : element.querySelector("td:nth-child(5)").innerText,
+                'justificativa' : element.querySelector("td:nth-child(6)").innerText
+            }
+        });
+
+        arrHoras = retornarArrDiasTrabalhadosValido(
+            arrHorasMisturadas[0].data, 
+            arrHorasMisturadas[arrHorasMisturadas.length-1].data, 
+            arrHorasMisturadas)
     
         return arrHoras
     }
 }
 
-var main = new horariosSGC()
+var main = new HorariosSGC()
