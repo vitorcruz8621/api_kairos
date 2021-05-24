@@ -1,15 +1,24 @@
 class HorariosSGC {
     marcacoes
+    saldoDiario
+    saldoDoMes
 
     constructor(){
         this.marcacoes = this.retornarMarcacoes()
-    }
+        this.saldoDiario = this.marcacoes.map(element => element.marcacaoHorario.saldoDoDia)
+        this.saldoDoMes = (() => {
+            var totalMinutosSaldoMes = (this.saldoDiario.map(elemento => parseInt(elemento.substring(0,2)) * 60 +  parseInt(elemento.substring(3,5))))
+                .reduce((total, atual) => total + atual)
+            var horasSaldoMes = Math.floor(totalMinutosSaldoMes / 60);
+            var minutosSaldoMes = totalMinutosSaldoMes - (horasSaldoMes * 60)
 
-    retornarListaSaldosDiarios() {
-        return ( this.marcacoes.map(element => element.marcacaoHorario.saldoDoDia) )
+            return (horasSaldoMes.toString()).concat(":").concat((minutosSaldoMes.toString()).padStart(2, "0") );
+        })()
     }
     
     retornarMarcacoes() {
+        console.log("Executando: retornarMarcacoes");
+
         function adicionarUmDia(keyData) {
             console.log("Executando: adicionarUmDia");
             console.log("Finalizando: adicionarUmDia");
@@ -43,7 +52,6 @@ class HorariosSGC {
             return objAtual;
         }
         
-        //VALIDAÇÃO
         function retornarArrDiasTrabalhadosValido(pKeyDataMin, pKeyDataMax, pArrHorasMisturadas) {
             console.log("Executando: retornarArrDiasTrabalhadosValido");
             var arrJsonMarcacoes = [];
@@ -83,7 +91,6 @@ class HorariosSGC {
                     (parseInt(horaEntrada.marcacaoHorario.substring(3,5))))
                 )
 
-                //arrayMarcacoes.concat(horaEntrada, horaSaida)
                 arrayMarcacoes.push(horaEntrada);
                 arrayMarcacoes.push(horaSaida);
             }
@@ -97,7 +104,6 @@ class HorariosSGC {
             }
         }
 
-        //Retornar marcações filtradas do dia específico para formato JSON
         function retornarBatidasComoDiaTrabalhadoJson(pDataAtualMarcacoes) {
             console.log("Executando: retornarBatidasComoDiaTrabalhadoJson");
 
@@ -142,7 +148,8 @@ class HorariosSGC {
             arrHorasMisturadas[0].data, 
             arrHorasMisturadas[arrHorasMisturadas.length-1].data, 
             arrHorasMisturadas)
-    
+
+        console.log("Finalizando: retornarMarcacoes");
         return arrHoras
     }
 }
