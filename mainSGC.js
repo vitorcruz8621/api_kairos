@@ -4,6 +4,10 @@ class HorariosSGC {
     constructor(){
         this.marcacoes = this.retornarMarcacoes()
     }
+
+    retornarListaSaldosDiarios() {
+        return ( this.marcacoes.map(element => element.marcacaoHorario.saldoDoDia) )
+    }
     
     retornarMarcacoes() {
         function adicionarUmDia(keyData) {
@@ -31,6 +35,10 @@ class HorariosSGC {
                 throw new Error("A data "+ keyData +" possue uma quantidade ímpar de marcações.")
             }
 
+            if (objAtual === [] || objAtual.length === 0) {
+                return null;
+            }
+
             console.log("Finalizando: validarBatidasERetoranrDiaFiltradoDiaFiltrado");
             return objAtual;
         }
@@ -41,12 +49,17 @@ class HorariosSGC {
             var arrJsonMarcacoes = [];
 
             for (var dataAtual = pKeyDataMin; dataAtual <= pKeyDataMax; dataAtual = adicionarUmDia(dataAtual) ) {
-                var diaAtual = (new Date(dataAtual.substring(6,10), (parseInt(dataAtual.substring(3,5)) - 1), dataAtual.substring(0,2) )).getDay()
-                if ( !( /0|6/.test(diaAtual) )) {//
+                //var diaAtual = (new Date(dataAtual.substring(6,10), (parseInt(dataAtual.substring(3,5)) - 1), dataAtual.substring(0,2) )).getDay()
+                //if ( !( /0|6/.test(diaAtual) )) {//
                     var objAtual = validarBatidasERetoranrDiaFiltradoDiaFiltrado(pArrHorasMisturadas, dataAtual)
-                    objAtual = retornarBatidasComoDiaTrabalhadoJson(objAtual);
-                    arrJsonMarcacoes.push(objAtual);
-                }
+
+                    if ( objAtual === null) {
+                        continue
+                    } else {
+                        objAtual = retornarBatidasComoDiaTrabalhadoJson(objAtual);
+                        arrJsonMarcacoes.push(objAtual);
+                    }
+               // }
             }
 
             console.log("Finalizando: retornarArrDiasTrabalhadosValido");
