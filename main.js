@@ -104,6 +104,21 @@ class Main {
         }, 0) )
     }
 
+    calcularSaldoDia(arrayMarcacoes) {
+        if (arrayMarcacoes.length % 2 === 0) {
+            var totalMinutos =  0;
+            for (var cont = 0; cont < arrayMarcacoes.length; cont = cont + 2) {
+                totalMinutos += ( ( ( parseInt(arrayMarcacoes[cont + 1].substring(0,2)) * 60 ) + ( parseInt(arrayMarcacoes[cont + 1].substring(3,5)) ) ) - ( ( parseInt(arrayMarcacoes[cont].substring(0,2)) * 60 ) + ( parseInt(arrayMarcacoes[cont].substring(3,5)) ) ) )
+            }
+    
+            var horas = Math.floor(totalMinutos / 60);
+            var minutos = totalMinutos - (horas * 60);
+    
+            return ((horas.toString().padStart(2, "0")).concat(":").concat(minutos.toString().padStart(2, "0")))
+        }
+        throw new Error("Marcações impares!")
+    }
+
 
     start () {
         let diaSelecionado = this.selecionarDia()
