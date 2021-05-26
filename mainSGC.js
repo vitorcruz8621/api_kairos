@@ -2,10 +2,13 @@ class HorariosSGC {
     marcacoes
     saldoDiario
     saldoDoMes
+    calendarioMesAtual
+    //cargaHorariaMes
 
     constructor(){
         this.marcacoes = this.retornarMarcacoes()
         this.saldoDiario = this.marcacoes.map(element => element.marcacaoHorario.saldoDoDia)
+
         this.saldoDoMes = (() => {
             var totalMinutosSaldoMes = (this.saldoDiario.map(elemento => parseInt(elemento.substring(0,2)) * 60 +  parseInt(elemento.substring(3,5))))
                 .reduce((total, atual) => total + atual)
@@ -14,10 +17,65 @@ class HorariosSGC {
 
             return (horasSaldoMes.toString()).concat(":").concat((minutosSaldoMes.toString()).padStart(2, "0") );
         })()
+
+        this.calendarioMesAtual = ( ()=>{
+            var dataObj = this.marcacoes[0].data.dataObjDate;
+            var arrayCalendario = [];
+            console.log("Executando: calendarioMesAtual")
+            const DIA_MAXIMO_DO_MES = ( ()=>{
+                switch ( dataObj.getMonth() ) {
+                    case 3:
+                    case 5:
+                    case 6:
+                    case 8:
+                    case 10:
+                        return 30;
+                    case 1:
+                        return (()=>{
+                            let isDataAnoBicexto = new Date (dataObj.getFullYear(), 1, 29)
+                            if ( isDataAnoBicexto.getMonth() === 1 && isDataAnoBicexto.getDate() === 29 ) {
+                                return 29;
+                            } else {
+                                return 28;
+                            }
+                        })()
+                    default:
+                        return 31;
+
+                }
+            })()
+
+            for (var dia = 1; dia <= DIA_MAXIMO_DO_MES; dia++) {
+                arrayCalendario.push(new Date(dataObj.getFullYear(), dataObj.getMonth(), dia))
+            }
+
+            console.log("Finalizando: calendarioMesAtual")
+            return arrayCalendario;
+        })()
+
+        /*this.cargaHorariaMes = (()=>{
+            this.marcacoes[0].
+        })*/
     }
     
     retornarMarcacoes() {
         console.log("Executando: retornarMarcacoes");
+
+        function montarDataStringEJson (pDataRawString) {
+            console.log("Executando: montarDataStringEJson");
+    
+            var objData = {
+                'dataString' : pDataRawString,
+                'dataObjDate' : new Date(
+                    pDataRawString.substring(6,10),
+                    parseInt(pDataRawString.substring(3,5)) - 1, 
+                    pDataRawString.substring(0,2)
+                ),
+            }
+    
+            console.log("Executando: montarDataStringEJson");
+            return objData;
+        }
 
         function adicionarUmDia(keyData) {
             console.log("Executando: adicionarUmDia");
@@ -25,8 +83,8 @@ class HorariosSGC {
             return ((parseInt(keyData.substring(0,2)))+1).toString().padStart(2,"0").concat(keyData.substring(2,10))
         }
         
-        function validarBatidasERetoranrDiaFiltradoDiaFiltrado (arrHorasMisturadas, keyData) {
-            console.log("Executando: validarBatidasERetoranrDiaFiltradoDiaFiltrado");
+        function validarBatidasERetoranrDiaFiltrado (arrHorasMisturadas, keyData) {
+            console.log("Executando: validarBatidasERetoranrDiaFiltrado");
             const MOVIMENTO_ENTRADA = "ENTRADA", MOVIMENTO_SAIDA = "SAIDA";
 
             var objAtual = arrHorasMisturadas.filter( (element, index) => {
@@ -48,7 +106,7 @@ class HorariosSGC {
                 return null;
             }
 
-            console.log("Finalizando: validarBatidasERetoranrDiaFiltradoDiaFiltrado");
+            console.log("Finalizando: validarBatidasERetoranrDiaFiltrado");
             return objAtual;
         }
         
@@ -59,7 +117,7 @@ class HorariosSGC {
             for (var dataAtual = pKeyDataMin; dataAtual <= pKeyDataMax; dataAtual = adicionarUmDia(dataAtual) ) {
                 //var diaAtual = (new Date(dataAtual.substring(6,10), (parseInt(dataAtual.substring(3,5)) - 1), dataAtual.substring(0,2) )).getDay()
                 //if ( !( /0|6/.test(diaAtual) )) {//
-                    var objAtual = validarBatidasERetoranrDiaFiltradoDiaFiltrado(pArrHorasMisturadas, dataAtual)
+                    var objAtual = validarBatidasERetoranrDiaFiltrado(pArrHorasMisturadas, dataAtual)
 
                     if ( objAtual === null) {
                         continue
@@ -108,7 +166,7 @@ class HorariosSGC {
             console.log("Executando: retornarBatidasComoDiaTrabalhadoJson");
 
             var batidas = {
-                'data' : pDataAtualMarcacoes[0].data,
+                'data' : montarDataStringEJson(pDataAtualMarcacoes[0].data),
                 'marcacaoHorario' : montarMarcacaoeSaldoDoDia(pDataAtualMarcacoes)
             }
 
