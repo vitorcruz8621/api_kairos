@@ -3,11 +3,12 @@ class HorariosSGC {
     saldoDiario
     saldoDoMes
     calendarioMesAtual
+    janela
     //cargaHorariaMes
 
     constructor(){
         this.marcacoes = this.retornarMarcacoes()
-        this.saldoDiario = this.marcacoes.map(element => element.marcacaoHorario.saldoDoDia)
+        this.saldoDiario = this.marcacoes.map(element => element.marcacaoBatida.saldoDoDia)
 
         this.saldoDoMes = (() => {
             var totalMinutosSaldoMes = (this.saldoDiario.map(elemento => parseInt(elemento.substring(0,2)) * 60 +  parseInt(elemento.substring(3,5))))
@@ -52,10 +53,34 @@ class HorariosSGC {
             console.log("Finalizando: calendarioMesAtual")
             return arrayCalendario;
         })()
-
         /*this.cargaHorariaMes = (()=>{
             this.marcacoes[0].
         })*/
+    }
+
+    executarBotaoWindow(){
+        const marcacoes = this.marcacoes;
+
+        function retornarHTML(){
+            var somatorioHtml = ``;
+            marcacoes.forEach(elementoMarcacoes => {
+                somatorioHtml += `<tr>`;
+                elementoMarcacoes.marcacaoBatida.listaMarcacoes.forEach(elementListMarc => {
+                    console.log(elementoMarcacoes)
+                    somatorioHtml += `<td>${elementListMarc.marcacaoHorario}</td>`;
+                })
+                somatorioHtml += `</tr>`;
+            })
+
+            return somatorioHtml;
+        }
+
+        this.janela = window.open("", "MsgWindow", "width=400,height=250");
+        this.janela.document.write(`<table>${retornarHTML()}</table>`);
+    }
+
+    fecharBotaoWindow() {
+        this.janela.window.close();
     }
     
     retornarMarcacoes() {
@@ -86,20 +111,30 @@ class HorariosSGC {
         function validarBatidasERetoranrDiaFiltrado (arrHorasMisturadas, keyData) {
             console.log("Executando: validarBatidasERetoranrDiaFiltrado");
             const MOVIMENTO_ENTRADA = "ENTRADA", MOVIMENTO_SAIDA = "SAIDA";
+            var regeitarMarcacaoDataHoje = undefined;
 
             var objAtual = arrHorasMisturadas.filter( (element, index) => {
                 if (element.data === keyData) {
                     if (index % 2 === 0 && element.movimento === MOVIMENTO_SAIDA)
-                        throw new Error("A marcação '"+element.data+" "+element.marcacaoHorario+" "+element.movimento+"' deveria ter o movimento '"+MOVIMENTO_ENTRADA+"'.");
+                        throw new Error(`A marcação '${element.data} ${element.marcacaoHorario} ${element.movimento}' deveria ter o movimento '${MOVIMENTO_ENTRADA}'.`);
                     else if (index % 2 === 1 && element.movimento !== "SAIDA")
-                        throw new Error("A marcação '"+element.data+" "+element.marcacaoHorario+" "+element.movimento+"' deveria ter o movimento '"+MOVIMENTO_SAIDA+"'.");
+                        throw new Error(`A marcação '${element.data} ${element.marcacaoHorario} ${element.movimento}' deveria ter o movimento '${MOVIMENTO_SAIDA}'.`);
                     else 
                         return element
                 }
             })
 
             if (objAtual.length % 2 !== 0 ) {
-                throw new Error("A data "+ keyData +" possue uma quantidade ímpar de marcações.")
+                regeitarMarcacaoDataHoje = confirm("Desconsiderar a marcação da data '" + keyData + "'")
+                if (regeitarMarcacaoDataHoje === false ) {
+                    throw new Error(`A data ${keyData} possue uma quantidade ímpar de marcações.`)
+                } else {
+                    return null;
+                }
+            }
+
+            if (objAtual.length === 2) {
+                //
             }
 
             if (objAtual === [] || objAtual.length === 0) {
@@ -167,7 +202,7 @@ class HorariosSGC {
 
             var batidas = {
                 'data' : montarDataStringEJson(pDataAtualMarcacoes[0].data),
-                'marcacaoHorario' : montarMarcacaoeSaldoDoDia(pDataAtualMarcacoes)
+                'marcacaoBatida' : montarMarcacaoeSaldoDoDia(pDataAtualMarcacoes)
             }
 
             console.log("Finalizando: retornarBatidasComoDiaTrabalhadoJson");
@@ -194,7 +229,7 @@ class HorariosSGC {
             
             return {
                 'data' : element.querySelector("td:nth-child(1)").innerText,
-                'marcacaoHorario' : element.querySelector("td:nth-child(2)").innerText,
+                'marcacaoHorario' : (element.querySelector("td:nth-child(2)").innerText).substring(0,5),
                 'movimento' : element.querySelector("td:nth-child(3)").innerText,
                 'statusAutorizacao' : element.querySelector("td:nth-child(4)").innerText,
                 'localidade' : element.querySelector("td:nth-child(5)").innerText,
