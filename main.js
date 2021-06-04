@@ -32,7 +32,7 @@ class Main {
             var totalMinutosSaldoMes = arrSaldoDiario.reduce((total, atual) => total + atual)
             var horas = Math.floor(this.totalMinutosSaldoMes / 60);
             var minutos = totalMinutosSaldoMes - (horas * 60)
-            return (horas.toString()).concat(":").concat(minutos.toString())
+            return (horas.toString().padStart(2,"0")).concat(":").concat(minutos.toString().padStart(2,"0"))
         })()
 
         return saldoMes;
