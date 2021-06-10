@@ -1,9 +1,9 @@
 class HorariosSGC {
-    marcacoes
-    saldoDiario
-    saldoDoMes
-    calendarioMesAtual
-    janela
+    marcacoes=null
+    saldoDiario=null
+    saldoDoMes=null
+    calendarioMesAtual=null
+    janela=null
     //cargaHorariaMes
 
     constructor(){
@@ -53,16 +53,44 @@ class HorariosSGC {
             console.log("Finalizando: calendarioMesAtual")
             return arrayCalendario;
         })()
+
+        this.botaoMarcacoes = this.criarBotaoExibicaoMarcacao()
+
+        var primeiroLabel = document.querySelector("#chamadoIt_length > label")
+        var segundoLabel = document.createElement("label")
+        segundoLabel.append(this.botaoMarcacoes)
+        primeiroLabel.after(segundoLabel)
         /*this.cargaHorariaMes = (()=>{
             this.marcacoes[0].
         })*/
     }
 
-    executarBotaoWindow(){
-        const marcacoes = this.marcacoes;
+    criarBotaoExibicaoMarcacao() {
+    
+        var botao = document.createElement("button");
+        //botao.onclick=this.retornarMarcacoes();
+        botao.type = "button";
+        botao.className = "botaoMarcacoes";
+        botao.id = "botaoMarcacoes";
+        botao.innerText = "Exibir Marcações";
+        botao.addEventListener("click", this.executarBotaoWindow )
 
-        function retornarHTML(){
+        /*var primeiroLabel = document.querySelector("#chamadoIt_length > label")
+        var segundoLabel = document.createElement("label")
+        segundoLabel.append(this.botaoMarcacoes)
+        primeiroLabel.after(segundoLabel)*/
+
+        return botao
+    }
+
+    executarBotaoWindow(marcacoes = this.marcacoes){
+        //const marcacoes = this.marcacoes;
+        console.log("Executando executarBotaoWindow");
+
+        function retornarHTML(marcacoes = this.marcacoes){
+            console.log("Executando retornarHTML");
             var somatorioHtml = ``;
+
             marcacoes.forEach(elementoMarcacoes => {
                 somatorioHtml += `<tr>`;
                 elementoMarcacoes.marcacaoBatida.listaMarcacoes.forEach(elementListMarc => {
@@ -72,15 +100,13 @@ class HorariosSGC {
                 somatorioHtml += `</tr>`;
             })
 
+            console.log("Finalizando retornarHTML");
             return somatorioHtml;
         }
-
+        
+        console.log("Finalizando executarBotaoWindow");
         this.janela = window.open("", "MsgWindow", "width=400,height=250");
-        this.janela.document.write(`<table>${retornarHTML()}</table>`);
-    }
-
-    fecharBotaoWindow() {
-        this.janela.window.close();
+        this.janela.document.write(`<table border=2>${retornarHTML(marcacoes)}</table>`);
     }
     
     retornarMarcacoes() {
